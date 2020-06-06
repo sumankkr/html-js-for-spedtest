@@ -1,0 +1,171 @@
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Biswa test</title>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/octicons/3.1.0/octicons.min.css">
+    <link href="http://www.jqueryscript.net/css/jquerysctipttop.css" rel="stylesheet" type="text/css">
+      <link href="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.css" rel="stylesheet" type="text/css">
+    <style>
+    body { background-color:#222;}
+      .speed_container{
+        margin:5% 0 0 25%;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container" style="margin:150px auto;">
+      <div class="col-sm-5 text-center speed_container">
+        <div class="panel panel-default">
+    
+		    <button id='startbutton'>
+      Start Test</button>
+  
+    <br> status: <span id='status'>
+  </span>
+  
+          <div class="panel-body text-center">
+             Download Speed <h3 id="down">0</h3>
+			 Upload Speed <h3 id="up">0</h3>
+			 Ping <h3 id="ping">0</h3>
+			 Jitter <h3 id="jitter">0</h3>
+			 IP <h4 id="ip">0</h4>
+			 Server <h4 id="nearest">0</h4>
+			  Quality and Buffert bolt <h4 id="grades">0</h4>
+			    DNS <h4 id="dns">0</h4>
+			 <div id='logdiv' style='display:none'>
+</div>
+          </div>
+        </div>
+      </div>
+  </div>
+ 
+ 
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+<script src="https://www.dslreports.com/assets/st/1.6/js/speedtest.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.js"></script>
+<script type="text/javascript">
+	
+function stoptest() {
+  dslr_speedtest({op: 'stop'});
+}
+
+function speedtest() {
+  log("Start button pushed");
+
+  var o = new Object();
+
+  // Can hint connection type
+  // from 0..
+  // ["GPRS", "3G", "4G", "WiFi", "Wireless", "Satellite", "DSL", "Cable", "Fiber", "", "Unsure"];
+  // undefined == Unsure
+  o.conntype = undefined;
+  // for complete results, bufferbloat must be true
+  // for faster results lacking grades and URL etc
+  // set to false
+  o.bufferbloat = true;
+  
+  // hz can be 4 (fastest), 2 (default) or 1 (slowest)
+  // determines speed that onstatus is called
+  o.hz = 4; 
+
+  o.apiKey = '12345678'; // Test API key
+
+  // fired continuously with basic info
+  o.onstatus = function(e) {
+    if (e.direction)
+      log(e.direction + " megabit/sec: down/up " + e.down + " / " + e.up + " ping=" + e.ping + "ms");
+       document.getElementById('down').innerHTML = Math.round(e.down) + "mbps";
+        document.getElementById('up').innerHTML =  Math.round(e.up) + "mbps";
+        document.getElementById('ping').innerHTML = e.ping + "ms";
+         
+        
+      
+      
+  };
+
+  // fired at 1hz with progress guesstimate
+  o.onprogress = function(o) {
+    document.getElementById('status').innerHTML = o.doing + " Progress:" + o.progress + "%";
+  };
+
+  o.onerror = function(o) {
+    // this also marks the test end. oncomplete is not fired
+    alert(o.msg);
+  };
+
+  // fired once upon successful conclusion
+  // o has results.. see log for json version of structure
+  o.oncomplete = function(o) {
+    var s = JSON.stringify(o);
+    log("oncomplete fired " + s);
+    document.getElementById('ip').innerHTML = o.ip;
+    document.getElementById('jitter').innerHTML = Math.round(o.jitter);
+     document.getElementById('nearest').innerHTML = o.nearest;
+     var str = o.grades
+      document.getElementById('grades').innerHTML = /,(.+)/.exec(str)[1];
+      document.getElementById('dns').innerHTML = o.dns;
+      
+      
+    
+  };
+
+  // fired if the test wants to ask a question of the user with
+  // a YES/NO answer.
+  o.onconfirm = function(s) {
+    return confirm(s);
+  };
+  
+  // pass any user data in, it is stored 
+  // and also returned with result.
+  o.udata = { "myuserfield": "myvalue" };
+
+  dslr_speedtest({
+    op: 'start',
+    params: o
+  });
+}
+
+var e = document.getElementById('startbutton');
+if(e){
+e.addEventListener("click", function() {
+  speedtest();
+});
+}
+/*e = document.getElementById('stopbutton');
+e.addEventListener("click", function() {
+  stoptest();
+});--*/
+
+function log(s) {
+  var log = document.getElementById('logdiv');
+  log.innerHTML = s + "<br>" + log.innerHTML;
+}
+</script>
+<script type="text/javascript"> 
+var mouseX = 0;
+var mouseY = 0;
+var popupCounter = 0;
+
+document.addEventListener("mousemove", function(e) {
+    mouseX = e.clientX;
+    mouseY = e.clientY;
+    //document.getElementById("coordinates").innerHTML = "<br />X: " + e.clientX + "px<br />Y: " + e.clientY + "px";
+});
+
+$(document).mouseleave(function () {
+    if (mouseY < 100) {
+        if (popupCounter < 1) {
+            swal("Please don't click the tab! Before Complete process");
+            
+        }
+        popupCounter ++;
+    }
+});
+    </script> 
+  </body>
+</html>
